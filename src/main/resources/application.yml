@@ -1,1 +1,47 @@
+server:
+  port: 16001
+
+#eureka:
+#  client:
+#    # 是否从将自己注册到eureka上
+#    register-with-eureka: true
+#    # 是否将注册信息拉到本地， 用于服务转发
+#    fetch-registry: true
+#    # eureka注册地址
+#    service-url:
+#      defaultZone: http://127.0.0.1:8761/eureka/
+spring:
+  application:
+    name: gateway-1
+  cloud:
+    gateway:
+      actuator: # 端点配置
+        verbose:
+          enabled: false
+#      discovery:
+#        locator:
+#          enabled: true # 这个配置会从服务注册中心获取服务列表并将其转换为路由规则。
+      routes:
+#        - id: test-id # 路由id
+#          uri: lb://client-1 # 目标服务id
+#          predicates:
+#            - Path=/test/** # 路由匹配规则
+        - id: fr
+          uri: ${fr.baseUrl}
+          predicates:
+            - Path=/webroot/**
+          filters:
+            - name: FrFilter
+              args:
+                baseMessage: My Custom Message
+                preLogger: true
+                postLogger: true
+fr:
+  baseUrl: http://localhost:6080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
